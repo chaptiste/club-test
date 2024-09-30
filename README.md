@@ -14,6 +14,12 @@ To get started with this template, simply paste this command into your terminal:
 bun i
 ```
 
+Then migrate db:
+
+```bash
+bunx prisma migrate dev --name init
+```
+
 ## Development
 
 To start the development server run:
