@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  description String?
+  profilePic  String?  // Profile picture URL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  media       Media[]      // User can have multiple media
+
+  followers   FollowRelation[] @relation("UserFollowers") // Followers relation
+  following   FollowRelation[] @relation("UserFollowing") // Following relation
+
+  // Relation to ViewedMedia for tracking which media has been viewed
+  viewedMedia ViewedMedia[]
+
+  @@index([username, email])
+}
+
+model Media {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  mediaUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id]) // Many media items can belong to a user
+
+  // For tracking views of the media
+  viewedBy    ViewedMedia[]
+
+  @@index([userId])
+}
+
+model ViewedMedia {
+  id        Int      @id @default(autoincrement())
+  mediaId   Int
+  userId    Int
+  viewedAt  DateTime @default(now())
+
+  media     Media    @relation(fields: [mediaId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([mediaId, userId]) // Ensure a media is viewed by a user only once
+}
+
+model FollowRelation {
+  followerId  Int
+  followingId Int
+
+  follower    User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId]) // Composite key to ensure unique following relationship
+}
