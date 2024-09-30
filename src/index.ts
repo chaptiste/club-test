@@ -108,7 +108,7 @@ app.put(
   {
     body: t.Object({
       username: t.Optional(t.String()),
-      email: t.String({ format: "email" }),
+      email: t.Optional(t.String({ format: "email" })),
       description: t.Optional(t.String()),
       profilePic: t.Optional(t.String()),
     }),
