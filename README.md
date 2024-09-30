@@ -1,4 +1,4 @@
-# Elysia with Bun runtime
+# BACKEND TYPESCRIPT DEVELOPER TECHNICAL TEST
 
 ## Getting Started
 
